@@ -2,7 +2,7 @@
 
 This repository hosts a standardized, high-performance pipeline for reconstructing physical scenes into **3D Gaussian Splats (3DGS)** from video inputs. The pipeline automates frame extraction, blur-filtering, Structure-from-Motion (SfM) camera registration, and neural rendering optimization.
 
-![3D Gaussian Splatting Reconstruction Demo: Rendered View (Left) | Depth Map (Middle) | Gaussian Splat Bounds (Right)](assets/demo.gif)
+![3D Gaussian Splatting Reconstruction Demo: Rendered View (Left) | Depth Map (Middle) | Gaussian Splat Bounds (Right)](assets/reconstruction_demo.gif)
 
 ---
 
