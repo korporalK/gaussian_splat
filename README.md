@@ -4,7 +4,7 @@ This repository hosts a standardized, high-performance pipeline for reconstructi
 
 ---
 
-## 📂 Directory Structure
+## Directory Structure
 
 The repository contains only the core pipeline scripts and configuration. The local environment, third-party libraries, and dataset folders are generated dynamically during setup to keep the repository size lightweight.
 
@@ -32,7 +32,97 @@ gaussian_splat/
 
 ---
 
-## 🛠️ Setup & Installation
+## 3D Gaussian Splatting: Core Theory
+
+3D Gaussian Splatting (3DGS) represents a 3D scene using millions of volumetric, anisotropic 3D Gaussians. Unlike implicit neural representations (like NeRFs), which query a coordinate network along rays, 3DGS is an explicit representation that projects 3D volumes directly onto the 2D image plane. This allows for real-time rasterization exceeding 100 FPS.
+
+### Scene Representation
+Each 3D Gaussian is parameterized by:
+1. **Position (Mean $\mu \in \mathbb{R}^3$)**: The centroid of the Gaussian in 3D space.
+2. **Covariance ($\Sigma \in \mathbb{R}^{3\times 3}$)**: Defines the size and orientation of the volume. To keep $\Sigma$ positive semi-definite during optimization, it is factored into a scaling vector $s \in \mathbb{R}^3$ and a rotation quaternion $q \in \mathbb{R}^4$:
+   $$\Sigma = R S S^T R^T$$
+3. **Opacity ($\alpha \in [0, 1]$)**: The volumetric density parameter.
+4. **Color**: Represented using Spherical Harmonics (SH) coefficients to capture view-dependent appearance (such as reflections and specular highlights).
+
+### Optimization Workflow
+The pipeline processes raw input video into an optimized 3D scene through a continuous feedback loop:
+
+```mermaid
+graph TD
+    A[Raw Input Video] --> B[FFT High-Pass Filtering]
+    B -->|Discard Blurry Frames| C[SSIM Similarity Analysis]
+    C -->|Select Keyframes| D[COLMAP/GLOMAP SfM]
+    D -->|Feature Matching & Triangulation| E[Sparse Point Cloud & Camera Poses]
+    E -->|Initialize Point Centroids| F[3D Gaussian Initialization]
+    F --> G[Projective 2D Rasterization]
+    G --> H[Loss Evaluation: L1 + DSSIM]
+    H -->|Backpropagation & Optimization| I[Adaptive Densification & Pruning]
+    I -->|Gradient Updates| F
+    G --> J[Optimized 3D Gaussian Scene]
+```
+
+### Rasterization & Adaptive Control
+- **Differentiable Rasterization**: The 3D Gaussians are projected onto the camera's image plane:
+  $$\Sigma' = J W \Sigma W^T J^T$$
+  where $W$ is the viewing transformation and $J$ is the Jacobian of the projective transformation. The projected Gaussians are sorted by depth and alpha-blended along each pixel.
+- **Adaptive Density Control**: Periodically, the algorithm prunes Gaussians with low opacity ($\alpha < 0.05$) and densifies (splits or duplicates) Gaussians in areas with high positional gradients.
+
+---
+
+## Capture & Recording Guidelines
+
+For the Structure-from-Motion (SfM) camera registration to succeed, the input video must be captured using specific strategies.
+
+### Fundamental Capture Rules
+- **Maximize Parallax (Translation)**: Always translate the camera through space (walk around the subject). Do *not* rotate the camera from a single fixed position (panning), as this creates zero parallax and camera registration will fail.
+- **Ensure High Overlap**: Maintain a $70\% - 80\%$ visual overlap between consecutive frames. Every part of the scene should be captured from at least three different vantage points.
+- **Perform Loop Closure**: End your scanning path exactly where you began. This forms a closed loop, allowing the optimizer to distribute and eliminate drift errors.
+
+### Device-Specific Recording Strategies
+
+| Device Class | Recommended Settings | Motion & Capture Pattern |
+| :--- | :--- | :--- |
+| **Smartphones** | 4K resolution at 60 FPS. Enable **AE/AF Lock** (exposure/focus lock) to prevent camera adjustments. Use the primary wide lens (avoid ultra-wide). | Move slowly and steadily. Follow a hemispherical orbit pattern around the subject at three different heights. |
+| **DSLR & Mirrorless** | Manual mode. Keep shutter speed fast ($\ge 1/120\text{s}$) to prevent motion blur. Lock aperture to $f/5.6 - f/8$ for a deep depth of field. Lock manual focus. | Keep zoom locked (do not zoom in/out during scanning). Walk slow paths, ensuring clean coverage of both details and wide context. |
+| **Drones (UAVs)** | Lock exposure and set white balance to a fixed preset. Fly on overcast days (diffuse lighting) to avoid moving shadows. | Combine a nadir (top-down) grid pass, an oblique pass (45-degree camera tilt), and circular orbits around structures. |
+
+### Visual Scan Patterns
+
+#### Hemispherical Orbit (Object Scan)
+For isolated objects, capture three overlapping circular passes at different altitudes.
+
+```mermaid
+graph TD
+    classDef object fill:#f9f,stroke:#333,stroke-width:2px;
+    Sub[Object Center]:::object
+    Orbit1(Orbit 1: Low Angle - 15°)
+    Orbit2(Orbit 2: Mid Angle - 45°)
+    Orbit3(Orbit 3: High Angle - 75°)
+    Orbit1 -->|Focus Camera| Sub
+    Orbit2 -->|Focus Camera| Sub
+    Orbit3 -->|Focus Camera| Sub
+```
+
+#### Perimeter Walk (Scene Scan)
+For rooms or outdoor courtyards, walk the perimeter in a closed loop while facing slightly outward.
+
+```mermaid
+graph TD
+    classDef path fill:#bbf,stroke:#333,stroke-width:2px;
+    WallL[Left Wall]
+    WallR[Right Wall]
+    WallF[Far Wall]
+    Start[Start Corner]:::path --> Path1[Perimeter Walk 1]:::path
+    Path1 --> Path2[Perimeter Walk 2]:::path
+    Path2 --> End[End Corner - Loop Closed]:::path
+    Path1 -->|Capture| WallL
+    Path2 -->|Capture| WallF
+    End -->|Capture| WallR
+```
+
+---
+
+## Setup & Installation
 
 ### Prerequisites
 - **Operating System**: Windows 10 or 11 (PowerShell is required).
@@ -60,7 +150,7 @@ gaussian_splat/
 
 ---
 
-## 🚀 How to Use
+## How to Use
 
 ### 1. Initialize a New Scene
 1. Create a new directory inside `projects/` named after your scene (e.g., `projects/living_room/`).
@@ -86,7 +176,7 @@ Run the unified `reconstruct.ps1` script. It automatically detects the video, ex
 
 ---
 
-## ⚙️ Core Scripts Reference
+## Core Scripts Reference
 
 ### 1. `setup_env.ps1`
 Automates Miniconda installation, creates the local environment (`gsplat-env`), pulls PyTorch 2.4.1 (CUDA 12.1), pins compatible packages (`numpy 1.26.4`), builds the `pycolmap` dev branch, applies a Windows 64-bit binary layout alignment patch, and installs COLMAP 4.0.2 with GLOMAP.
@@ -110,7 +200,7 @@ The primary orchestrator that coordinates the pipeline:
 
 ---
 
-## 📊 Viewing the Splats
+## Viewing the Splats
 During training, the script spawns a real-time web viewer. You can navigate and inspect your training splat live at:
 *   **http://localhost:8080**
 
@@ -118,13 +208,13 @@ The final output point clouds and rendered trajectories are saved to `projects/<
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to submit bug reports, feature requests, or pull requests.
 
 ---
 
-## 📄 License & Dependencies Licensing
+## License & Dependencies Licensing
 
 This project is licensed under the [MIT License](LICENSE).
 
