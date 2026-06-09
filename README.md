@@ -2,6 +2,8 @@
 
 This repository hosts a standardized, high-performance pipeline for reconstructing physical scenes into **3D Gaussian Splats (3DGS)** from video inputs. The pipeline automates frame extraction, blur-filtering, Structure-from-Motion (SfM) camera registration, and neural rendering optimization.
 
+![3D Gaussian Splatting Reconstruction Demo](assets/demo.gif)
+
 ---
 
 ## Directory Structure
@@ -93,8 +95,7 @@ For isolated objects, capture three overlapping circular passes at different alt
 
 ```mermaid
 graph TD
-    classDef object fill:#f9f,stroke:#333,stroke-width:2px;
-    Sub[Object Center]:::object
+    Sub[Object Center]
     Orbit1(Orbit 1: Low Angle - 15°)
     Orbit2(Orbit 2: Mid Angle - 45°)
     Orbit3(Orbit 3: High Angle - 75°)
@@ -108,13 +109,12 @@ For rooms or outdoor courtyards, walk the perimeter in a closed loop while facin
 
 ```mermaid
 graph TD
-    classDef path fill:#bbf,stroke:#333,stroke-width:2px;
     WallL[Left Wall]
     WallR[Right Wall]
     WallF[Far Wall]
-    Start[Start Corner]:::path --> Path1[Perimeter Walk 1]:::path
-    Path1 --> Path2[Perimeter Walk 2]:::path
-    Path2 --> End[End Corner - Loop Closed]:::path
+    Start[Start Corner] --> Path1[Perimeter Walk 1]
+    Path1 --> Path2[Perimeter Walk 2]
+    Path2 --> End[End Corner - Loop Closed]
     Path1 -->|Capture| WallL
     Path2 -->|Capture| WallF
     End -->|Capture| WallR
