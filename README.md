@@ -6,19 +6,21 @@ This repository hosts a standardized, high-performance pipeline for reconstructi
 
 ## 📂 Directory Structure
 
-The project is structured around a portable, per-project architecture under the `projects/` directory.
+The repository contains only the core pipeline scripts and configuration. The local environment, third-party libraries, and dataset folders are generated dynamically during setup to keep the repository size lightweight.
 
 ```
 gaussian_splat/
-  ├── colmap/                  # Local CUDA-enabled COLMAP 4.0.2 binaries
-  ├── gplat-env/               # Portable Conda environment (Python 3.10 + CUDA 12.1)
-  ├── gsplat_src/              # gsplat source code library
-  ├── scripts/                 # Core automation & execution scripts
+  ├── colmap/                  # [Generated] Local CUDA-enabled COLMAP 4.0.2 binaries
+  ├── gplat-env/               # [Generated] Portable Conda environment (Python 3.10 + CUDA 12.1)
+  ├── gsplat_src/              # [Generated] Shallow-cloned gsplat v1.5.2 (patched for Windows compatibility)
+  ├── scripts/                 # [Tracked] Core automation & execution scripts
+  │     ├── patches/           # [Tracked] Local patch files
+  │     │     └── simple_trainer.py
   │     ├── setup_env.ps1      # Environment setup script
   │     ├── update_colmap.ps1  # COLMAP binary deployment script
   │     ├── preprocess.py      # Video frame extraction & filtering pipeline
-  │     └── reconstruct.ps1     # Unified reconstruction orchestrator
-  └── projects/                # Scene dataset folders
+  │     └── reconstruct.ps1    # Unified reconstruction orchestrator
+  └── projects/                # [Ignored] Scene dataset folders (contains empty .gitkeep)
         ├── <project_name>/
         │     ├── input/       # Raw video file (mp4, webm, mov, etc.)
         │     ├── images/      # Preprocessed 4K frames (lossless PNG)
@@ -32,13 +34,29 @@ gaussian_splat/
 
 ## 🛠️ Setup & Installation
 
-The pipeline runs on **Windows (PowerShell)**. To set up the Conda environment, PyTorch, local CUDA toolkit, required dependencies, and COLMAP binaries, execute the following script from the root folder:
+### Prerequisites
+- **Operating System**: Windows 10 or 11 (PowerShell is required).
+- **Hardware**: An NVIDIA GPU with CUDA support (strongly recommended to have at least 8GB of VRAM).
+- **Git**: Git must be installed and available on your system `PATH` to fetch dependencies.
 
-```powershell
-.\scripts\setup_env.ps1
-```
+### Installation Steps
 
-*This script installs a self-contained CUDA toolkit locally in the Conda environment and downloads pre-built `gsplat` wheels, eliminating the need to install a host Microsoft Visual Studio compiler.*
+1. Clone this repository to your local machine.
+2. Open PowerShell and allow script execution for this session (if your system policy restricts running scripts):
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+   ```
+3. Run the setup script from the root folder:
+   ```powershell
+   .\scripts\setup_env.ps1
+   ```
+
+### What the Setup Script Automates:
+*   **Miniconda Installation**: Installs Miniconda locally under your user profile if it's not already detected.
+*   **Local Conda Environment (`gsplat-env`)**: Sets up a local Python 3.10 environment, installs PyTorch 2.4.1 (CUDA 12.1), and downloads standard pipeline packages.
+*   **Precompiled `gsplat` Wheels**: Installs the precompiled binary wheels of `gsplat 1.5.2` directly, eliminating the need to have a host Microsoft Visual Studio C++ Compiler.
+*   **Automated Windows Patching**: Shallow-clones the official `nerfstudio-project/gsplat` repository at version `v1.5.2` and applies a custom Windows compatibility patch to the training script (replacing `fused_ssim` with `torchmetrics` to prevent import/compilation failures on Windows).
+*   **COLMAP binaries**: Downloads and configures local CUDA-enabled COLMAP 4.0.2 with GLOMAP integration into your root directory.
 
 ---
 
