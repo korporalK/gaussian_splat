@@ -224,3 +224,13 @@ This pipeline integrates and automates several open-source libraries and binarie
 - **[COLMAP](https://github.com/colmap/colmap)**: Licensed under the [BSD 3-Clause License](https://github.com/colmap/colmap/blob/main/COPYING.txt) (Copyright (c) Johannes L. Schönberger).
 - **[GLOMAP](https://github.com/colmap/glomap)**: Licensed under the [BSD 3-Clause License](https://github.com/colmap/glomap/blob/main/LICENSE) (Copyright (c) 2024, ETH Zurich).
 - **[PyColmap](https://github.com/colmap/pycolmap)**: Licensed under the [BSD 3-Clause License](https://github.com/colmap/pycolmap/blob/main/LICENSE).
+
+---
+
+## References
+
+1. **Kerbl, B., Kopanas, G., Leimkühler, T., & Drettakis, G. (2023).** *3D Gaussian Splatting for Real-Time Radiance Field Rendering.* ACM Transactions on Graphics (TOG), 42(4), 1-14. [Project Page & Paper](https://repo-sam.inria.fr/copireg/3d-gaussian-splatting/)
+2. **Schönberger, J. L., & Frahm, J. M. (2016).** *Structure-from-Motion Revisited.* IEEE Conference on Computer Vision and Pattern Recognition (CVPR). [COLMAP Documentation](https://colmap.github.io/)
+3. **Schönberger, J. L., Zheng, E., Pollefeys, M., & Frahm, J. M. (2016).** *Pixelwise View Selection for Unstructured Multi-View Stereo.* European Conference on Computer Vision (ECCV).
+4. **ETH Zürich CVG. (2024).** *GLOMAP: Global Structure-from-Motion.* [GitHub Repository](https://github.com/colmap/glomap)
+5. **nerfstudio-project.** *gsplat: A library for differentiable rasterization of 3D Gaussians.* [Documentation](https://docs.gsplat.studio/)
