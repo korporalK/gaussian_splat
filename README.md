@@ -200,11 +200,18 @@ The primary orchestrator that coordinates the pipeline:
 
 ---
 
-## Viewing the Splats
+## Viewing and Editing the Splats
+
 During training, the script spawns a real-time web viewer. You can navigate and inspect your training splat live at:
 *   **http://localhost:8080**
 
 The final output point clouds and rendered trajectories are saved to `projects/<project_name>/splats/`.
+
+### Recommended GUI Software
+For post-processing and editing your generated splats, or if you prefer a graphical user interface over command-line execution, we recommend the following open-source tools:
+
+- **[SuperSplat](https://playcanvas.github.io/supersplat/) (Splat Editing)**: A web-based, hardware-accelerated editor developed by PlayCanvas. You can load your generated `.ply` files directly into the browser to crop, select, delete floating artifacts (noise), and optimize the splats.
+- **[Lichtfeld Studio](https://github.com/Lichtfeld/LichtfeldStudio) (GUI Generator)**: A desktop GUI application that allows you to configure, generate, and train your splats locally with a visual interface.
 
 ---
 
