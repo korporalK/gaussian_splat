@@ -115,3 +115,22 @@ During training, the script spawns a real-time web viewer. You can navigate and 
 *   **http://localhost:8080**
 
 The final output point clouds and rendered trajectories are saved to `projects/<project_name>/splats/`.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to submit bug reports, feature requests, or pull requests.
+
+---
+
+## 📄 License & Dependencies Licensing
+
+This project is licensed under the [MIT License](LICENSE).
+
+### Third-Party Software Licenses
+This pipeline integrates and automates several open-source libraries and binaries, which are subject to their own respective licensing terms:
+- **[gsplat](https://github.com/nerfstudio-project/gsplat)**: Licensed under the [Apache License 2.0](https://github.com/nerfstudio-project/gsplat/blob/main/LICENSE) (developed by nerfstudio-project authors).
+- **[COLMAP](https://github.com/colmap/colmap)**: Licensed under the [BSD 3-Clause License](https://github.com/colmap/colmap/blob/main/COPYING.txt) (Copyright (c) Johannes L. Schönberger).
+- **[GLOMAP](https://github.com/colmap/glomap)**: Licensed under the [BSD 3-Clause License](https://github.com/colmap/glomap/blob/main/LICENSE) (Copyright (c) 2024, ETH Zurich).
+- **[PyColmap](https://github.com/colmap/pycolmap)**: Licensed under the [BSD 3-Clause License](https://github.com/colmap/pycolmap/blob/main/LICENSE).
