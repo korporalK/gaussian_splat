@@ -210,8 +210,8 @@ The final output point clouds and rendered trajectories are saved to `projects/<
 ### Recommended GUI Software
 For post-processing and editing your generated splats, or if you prefer a graphical user interface over command-line execution, we recommend the following open-source tools:
 
-- **[SuperSplat](https://playcanvas.github.io/supersplat/) (Splat Editing)**: A web-based, hardware-accelerated editor developed by PlayCanvas. You can load your generated `.ply` files directly into the browser to crop, select, delete floating artifacts (noise), and optimize the splats.
-- **[Lichtfeld Studio](https://github.com/Lichtfeld/LichtfeldStudio) (GUI Generator)**: A desktop GUI application that allows you to configure, generate, and train your splats locally with a visual interface.
+- **[SuperSplat](https://github.com/playcanvas/supersplat) (Splat Editing)**: A web-based, hardware-accelerated editor developed by PlayCanvas (live web tool available [here](https://playcanvas.github.io/supersplat/)). You can load your generated `.ply` files directly into the browser to crop, select, delete floating noise artifacts, and optimize the splats.
+- **[Lichtfeld Studio](https://github.com/MrNeRF/LichtFeld-Studio) (GUI Generator)**: A desktop GUI application developed by MrNeRF that allows you to configure, generate, and train your splats locally with a visual interface.
 
 ---
 
